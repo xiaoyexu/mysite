@@ -1,9 +1,10 @@
 {% extends 'xiaoye/layout/baseLayout.html' %}
 {% load staticfiles %}
-{% block title %}首页{% endblock %}
+{% load PhraseTag %}
+{% block title %}{% PhraseTag default home %}{% endblock %}
 {% block body %}
     Test
     <script>
-        test();
+        test('{% PhraseTag default home %}');
     </script>
 {% endblock %}

@@ -144,3 +144,30 @@ def requireProcess(need_login=True, need_decrypt=True):
         return check
 
     return decorate
+
+
+def parseFilter(filter, context):
+    if type(filter) == str or type(filter) == unicode:
+        v = filter
+    else:
+        v = filter.resolve(context)
+        if v == '':
+            v = filter
+    return v
+
+
+def getPhrase(request, appid, phraseid, default=None):
+    """The function return the phrase text against language in session"""
+    lan = request.session.get('lan', 'cn')
+    p = SitePhrase.objects.filter(app__appId=appid, phraseId=phraseid, phraseLan__key=lan)
+    if p and p[0]:
+        if p[0].content:
+            htmlContent = p[0].content
+        else:
+            htmlContent = p[0].bigContent
+    else:
+        if default:
+            htmlContent = default
+        else:
+            htmlContent = "[%s %s %s]" % (appid, phraseid, lan)
+    return htmlContent
