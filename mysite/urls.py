@@ -17,5 +17,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^xiaoye/', include('xiaoye.urls')),
+    # url(r'^xiaoye/', include('xiaoye.urls')),
+    url(r'', include('xiaoye.urls')),
 ]

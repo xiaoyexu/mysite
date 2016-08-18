@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static "xiaoye/main.css" %}"/>
+    <script src="{% static "xiaoye/main.js" %}"></script>
+</head>
+<body>
+haha
+{% block body %}
+{% endblock %}
+</body>
+</html>

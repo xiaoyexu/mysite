@@ -11,6 +11,7 @@ import urllib2
 import json
 import logging
 import pyDes
+import base64
 
 log = logging.getLogger('default')
 
@@ -44,7 +45,7 @@ class ResponseObject(object):
     def getJSONDict(self):
         """
         Convert to dictionary
-        
+
         :return: A dictionary of response
         """
         return {'code': self.code, 'desc': self.desc, 'data': self.data}
@@ -52,15 +53,13 @@ class ResponseObject(object):
 
 def THR(request, template, context):
     """
-    Return Django HttpResponse with given template
+    Return Django HttpResponse with given template and context
 
     :param request:
     :param template:
     :param context:
     :return:
     """
-
-    """Return HttpResponse object with template and context"""
     template = loader.get_template(template)
     ctx = RequestContext(request, context)
     return HttpResponse(template.render(ctx))
@@ -84,7 +83,7 @@ def decrypt(text, dec=True):
             pad = None
             # 3DES object
             des = pyDes.triple_des(key, pyDes.CBC, iv, pad, pyDes.PAD_PKCS5)
-            text = pyDes.base64.decodestring(text)
+            text = base64.decodestring(text)
             decryptStr = des.decrypt(text, pad, pyDes.PAD_PKCS5)
         except Exception, e:
             log.error(e.message)
