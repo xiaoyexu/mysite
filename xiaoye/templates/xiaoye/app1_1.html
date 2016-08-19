@@ -3,12 +3,14 @@
 {% load PhraseTag %}
 {% block title %}{% PhraseTag default home %}{% endblock %}
 {% block body %}
-    <div id="test">To app1_1</div>
+    App1 1
+    <div id="home">Home</div><div id="next">Next</div>
     <script>
-{#        test('{% PhraseTag default home %}');#}
-    $("#test").click(function(){
-{#        alert('click')#}
-        toAction('app1_1');
+    $("#next").click(function(){
+        toAction('app1_2');
+    });
+    $("#home").click(function(){
+        toAction('index');
     });
     </script>
 {% endblock %}

@@ -93,7 +93,7 @@ def decrypt(text, dec=True):
         return text
 
 
-def requireProcess(need_login=True, need_decrypt=True):
+def requireJSONAPIProcess(need_login=True, need_decrypt=True):
     """
     Decoration for preprocess of each request.
 
@@ -146,6 +146,45 @@ def requireProcess(need_login=True, need_decrypt=True):
     return decorate
 
 
+# For Web app, if it's on application server
+def requireWebProcess(need_login=True):
+    """
+    Decoration for preprocess of each request.
+
+    Parameter need_login, need_decrypt will be saved in request object for view to use.
+    UserId will also be saved as userId also if available.
+    Decrypted or original request body will be convert into json object and saved as dictBody in request.
+    :param need_login: Verification for post-login request
+    :param need_decrypt: Process decryption of request body
+    :return: view function
+    """
+
+    def decorate(view_func):
+        def check(*args, **kwargs):
+            request = args[0]
+            request.need_login = need_login
+            userId = request.session.get('userId', None)
+            request.userId = userId
+            if need_login:
+                # Validate the userId
+                if not userId or User.objects.filter(userId=userId, status__key='ACTIVE').count() == 0:
+                    return HttpResponseRedirect('login')
+            # Continue view process, save request navigation path
+            navPath = request.session.get('navPath', [])
+            if len(navPath) == 0 or navPath[-1] != view_func.func_name:
+                navPath.append(view_func.func_name)
+            request.session['navPath'] = navPath
+            try:
+                return view_func(*args, **kwargs)
+            except Exception, e:
+                log.error(e.message)
+                return THR(request, 'xiaoye/error.html', {'error': e.message})
+
+        return check
+
+    return decorate
+
+
 def parseFilter(filter, context):
     if type(filter) == str or type(filter) == unicode:
         v = filter
@@ -171,3 +210,33 @@ def getPhrase(request, appid, phraseid, default=None):
         else:
             htmlContent = "[%s %s %s]" % (appid, phraseid, lan)
     return htmlContent
+
+
+class WebSite:
+    apps = {}
+
+    def handle(self, request):
+        nav = {}
+        if request.method == 'POST':
+            # Get posted data : pageAction, pageParams, pageMode
+            nav['pageApp'] = request.POST.get('pageApp', '')
+            nav['pageAction'] = request.POST.get('pageAction', '')
+            nav['pageParams'] = request.POST.get('pageParams', '')
+            nav['pageMode'] = request.POST.get('pageMode', '')
+        else:
+            nav['pageApp'] = 'home'
+        app = self.apps.get(nav['pageApp'], None)
+        if app:
+            return app.handle(request)
+        return THR(request, 'xiaoye/index.html', {})
+
+
+class Application:
+    def handle(self, request):
+        return THR(request, 'xiaoye/app1_1.html', {})
+
+
+home = Application()
+
+webSite = WebSite()
+webSite.apps['home'] = home

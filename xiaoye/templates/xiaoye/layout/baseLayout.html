@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     {% load staticfiles %}
+    {% load PhraseTag %}
     <link rel="stylesheet" type="text/css" href="{% static "xiaoye/main.css" %}"/>
+    <script src="{% static "common/jquery-3.1.0.min.js" %}"></script>
     <script src="{% static "xiaoye/main.js" %}"></script>
 </head>
 <body>
-haha
+<form name='navForm' action='index' method='POST'>
+    {% csrf_token %}
+    <input id='navForm_pageApp' type='hidden' name='pageApp' value=''>
+    <input id='navForm_pageAction' type='hidden' name='pageAction' value=''>
+    <input id='navForm_pageParams' type='hidden' name='pageParams' value=''>
+    <input id='navForm_pageMode' type='hidden' name='pageMode' value=''>
+</form>
+<div class="alert alert-info busy-indicator-center" id="divPageLoading">
+    <div class="row">
+        <p class="text-center">{% PhraseTag g_default plsWait %}</p>
+    </div>
+    {#    <div class="row">#}
+    {#        <img src="{% static "img/ajax-loaders/ajax-loader-7.gif" %}"/>#}
+    {#    </div>#}
+</div>
+
+{#{{ request.session.navPath }}#}
 {% block body %}
 {% endblock %}
+<script>
+    $(function () {
+        $('#divPageLoading').hide();
+    });
+</script>
 </body>
 </html>
