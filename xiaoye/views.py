@@ -3,7 +3,8 @@ from django.shortcuts import render
 from xiaoye.common import *
 
 
-@requireJSONAPIProcess(need_login=True)
+@csrf_exempt
+@requireJSONAPIProcess(need_login=False, need_decrypt=False)
 def jsonResult(request):
     ro = ResponseObject(0, u'')
     return ro.toJSONHttpResponse()

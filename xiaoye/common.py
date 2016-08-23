@@ -12,6 +12,7 @@ import json
 import logging
 import pyDes
 import base64
+from django.views.decorators.csrf import csrf_exempt
 
 log = logging.getLogger('default')
 
@@ -165,10 +166,9 @@ def requireWebProcess(need_login=True):
             request.need_login = need_login
             userId = request.session.get('userId', None)
             request.userId = userId
-            if need_login:
+            if need_login and (not userId or User.objects.filter(userId=userId, status__key='ACTIVE').count() == 0):
                 # Validate the userId
-                if not userId or User.objects.filter(userId=userId, status__key='ACTIVE').count() == 0:
-                    return HttpResponseRedirect('login')
+                return HttpResponseRedirect('login')
             # Continue view process, save request navigation path
             navPath = request.session.get('navPath', [])
             if len(navPath) == 0 or navPath[-1] != view_func.func_name:
