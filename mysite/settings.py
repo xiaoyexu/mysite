@@ -130,3 +130,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+API_3DES_KEY = 'abcdefghijklmnopqrstuvwx'
+API_3DES_IV = '12345678'

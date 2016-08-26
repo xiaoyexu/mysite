@@ -75,3 +75,15 @@ class SitePhrase(models.Model):
 
     def __unicode__(self):
         return "%s %s %s %s" % (self.phraseId, self.app.description, self.phraseLan.description, self.content)
+
+
+class AccessLog(models.Model):
+    accessAt = models.DateTimeField(auto_now_add=True, verbose_name=u"时间")
+    view = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"页面")
+
+    class Meta:
+        verbose_name = u"访问日志"
+        verbose_name_plural = u"访问日志"
+
+    def __unicode__(self):
+        return "%s %s %s %s" % (self.phraseId, self.app.description, self.phraseLan.description, self.content)

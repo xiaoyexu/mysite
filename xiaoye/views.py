@@ -3,12 +3,46 @@ from django.shortcuts import render
 from xiaoye.common import *
 
 
+##### JSON API #####
+
 @csrf_exempt
 @requireJSONAPIProcess(need_login=False, need_decrypt=False)
 def jsonResult(request):
     ro = ResponseObject(0, u'')
     return ro.toJSONHttpResponse()
 
+
+# Login
+def api_login(request):
+    body = request.dictBody
+    username = body.get('username', None)
+    password = body.get('password', None)
+    user = User.objects.filter(loginName=username)
+    if not user:
+        # User not found
+        return ResponseObject(1, u'登录失败')
+    user = user[0]
+    if not user.loginCredentialEncrypted:
+        # User login credential is not encrypted, encrypted it by sha1
+        user.loginCredential = hashlib.sha1(user.loginCredential).hexdigest()
+        user.loginCredentialEncrypted = True
+        user.save()
+    if user.loginCredential != password:
+        return ResponseObject(2, u'登录失败')
+    if user.status.key != 'ACTIVE':
+        return ResponseObject(3, u'登录失败')
+    if not request.need_decrypt:
+        request.session['userId'] = '%s' % user.userId
+    return ResponseObject(0, data={'userId': '%s' % user.userId})
+
+
+@csrf_exempt
+@requireJSONAPIProcess(need_login=False, need_decrypt=False)
+def apiLogin(request):
+    return api_login(request).toJSONHttpResponse()
+
+
+##### Web view #####
 
 @requireWebProcess(need_login=False)
 def index(request):

@@ -12,7 +12,9 @@ import json
 import logging
 import pyDes
 import base64
+import hashlib
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 log = logging.getLogger('default')
 
@@ -77,9 +79,9 @@ def decrypt(text, dec=True):
     if dec:
         try:
             # 3DES key
-            key = 'abcdefghijklmnopqrstuvwx'
+            key = settings.API_3DES_KEY
             # 3DES Initial vector
-            iv = '12345678'
+            iv = settings.API_3DES_IV
             # No padding
             pad = None
             # 3DES object

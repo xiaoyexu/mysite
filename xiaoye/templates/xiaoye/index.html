@@ -3,12 +3,33 @@
 {% load PhraseTag %}
 {% block title %}{% PhraseTag default home %}{% endblock %}
 {% block body %}
-    <div id="test">To app1_1</div>
-    <script>
-{#        test('{% PhraseTag default home %}');#}
-    $("#test").click(function(){
-{#        alert('click')#}
-        toAction('app1_1');
-    });
-    </script>
+    <div class="row">
+        <div class="box col-md-10 col-md-offset-1">
+            <div class="jumbotron">
+                <h1>徐晓烨的网站</h1>
+
+                <p>请自行脑补华丽的标题</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box col-md-2 col-md-offset-1">
+            <p>在这里<br>脑补我卓越非凡的人生经历</p>
+        </div>
+        <div class="box col-md-7">
+            <div class="row">
+                <ul class="breadcrumb">
+                    <li><a href="#">主页</a></li>
+                    <li><a href="#">迷之根本不存在的二级菜单</a></li>
+                    <li class="active">迷之根本不存在的二级菜单的下的链接</li>
+                </ul>
+            </div>
+            <div>
+                <p>在这里脑补我精湛的文笔和无可辩驳的逻辑分析
+                <br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.
+                </p>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

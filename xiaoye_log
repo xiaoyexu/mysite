@@ -1,2 +1,6 @@
 ERROR 2016-08-23 02:23:26,838 No JSON object could be decoded
 ERROR 2016-08-23 02:25:22,686 No JSON object could be decoded
+ERROR 2016-08-26 04:13:58,842 No JSON object could be decoded
+ERROR 2016-08-26 04:16:26,427 No JSON object could be decoded
+ERROR 2016-08-26 05:19:21,098 Expecting property name: line 2 column 1 (char 2)
+ERROR 2016-08-26 05:21:00,264 Expecting property name: line 2 column 1 (char 2)

@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     # Json APIs
     url(r'^jsonResult$', views.jsonResult, name='jsonResult'),
+    url(r'^api\/login$', views.apiLogin, name='apiLogin'),
     # End of Json APIs
     # Common process
     url(r'^back$', views.back, name='back'),
