@@ -7,11 +7,16 @@
         <div class="box col-md-10 col-md-offset-1">
             <div class="jumbotron">
                 <h1>徐晓烨的网站</h1>
-
-                <p>请自行脑补华丽的标题</p>
+                <p>请自行脑补华丽的标题......我们缺UI</p>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="box col-md-10 col-md-offset-1">
+            <div id="main" style="height:300px;"></div>
+        </div>
+    </div>
+    <hr/>
     <div class="row">
         <div class="box col-md-2 col-md-offset-1">
             <p>在这里<br>脑补我卓越非凡的人生经历</p>
@@ -26,10 +31,22 @@
             </div>
             <div>
                 <p>在这里脑补我精湛的文笔和无可辩驳的逻辑分析
-                <br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.
+                    <br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.
                 </p>
             </div>
+
+
         </div>
     </div>
-
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+        var newUrl = '/ajax?sn=raspTemp';
+        myChart.showLoading();
+        $.get(newUrl, function (d) {
+            myChart.hideLoading();
+            var result = jQuery.parseJSON(d);
+            var option = getEChartLine(result.date, result.data);
+            myChart.setOption(option);
+        });
+    </script>
 {% endblock %}

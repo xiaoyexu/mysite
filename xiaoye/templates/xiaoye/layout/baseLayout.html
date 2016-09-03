@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "xiaoye/main.css" %}"/>
     <script src="{% static "common/jquery-3.1.0/jquery-3.1.0.min.js" %}"></script>
     <script src="{% static "common/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "common/echart-3.2.3/echarts.min.js" %}"></script>
     <script src="{% static "xiaoye/main.js" %}"></script>
 </head>
 <body>
@@ -29,8 +30,14 @@
 </div>
 
 {#{{ request.session.navPath }}#}
-{% block body %}
-{% endblock %}
+<div class="ch-container">
+    <div class="row">
+        <div class="col-md-12">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
 <script>
     $(function () {
         $('#divPageLoading').hide();

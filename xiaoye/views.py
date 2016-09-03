@@ -87,3 +87,19 @@ def app1_2(request):
 @requireWebProcess(need_login=False)
 def app2_1(request):
     return THR(request, 'xiaoye/app2_1.html', {})
+
+
+@requireWebProcess(need_login=False)
+@csrf_exempt
+def ajax(request):
+    serviceName = request.GET.get('sn', None)
+    result = {}
+    if serviceName == 'raspTemp':
+        date = []
+        data = []
+        for rt in RaspTemperature.objects.filter(checkedAt__gte=datetime.datetime.now() - datetime.timedelta(days=14)).all():
+            date.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
+            data.append(rt.temperature)
+        result['date'] = date
+        result['data'] = data
+    return HttpResponse(json.dumps(result))

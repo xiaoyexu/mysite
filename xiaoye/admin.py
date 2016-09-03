@@ -18,3 +18,10 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+class RaspTemperatureAdmin(admin.ModelAdmin):
+    search_fields = (
+        'checkedAt', 'temperature')
+    list_display = (
+        'checkedAt', 'temperature')

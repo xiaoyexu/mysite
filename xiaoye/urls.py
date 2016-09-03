@@ -16,6 +16,9 @@ urlpatterns = [
     url(r'^app1\_2$', views.app1_2, name='app1_2'),
     url(r'^app2\_1$', views.app2_1, name='app2_1'),
     # End of Application pages
+    # Ajax
+    url(r'^ajax$', views.ajax, name='ajax'),
+    # End of Ajax
     # Default home page
     url(r'^.*$', views.index, name='index'),
     # End of Default home page

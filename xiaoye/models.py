@@ -87,3 +87,16 @@ class AccessLog(models.Model):
 
     def __unicode__(self):
         return "%s %s %s %s" % (self.phraseId, self.app.description, self.phraseLan.description, self.content)
+
+
+# Raspberry CPU Temperature
+class RaspTemperature(models.Model):
+    checkedAt = models.DateTimeField(auto_now_add=True, verbose_name=u"时间")
+    temperature = models.FloatField(default=0, null=True, blank=True, verbose_name=u"温度")
+
+    class Meta:
+        verbose_name = u"树莓派3温度表"
+        verbose_name_plural = u"树莓派3温度表"
+
+    def __unicode__(self):
+        return "%s %f" % (self.checkedAt, self.temperature)
