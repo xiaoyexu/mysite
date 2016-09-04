@@ -3,6 +3,35 @@ from django.db import models
 import uuid
 
 
+class WeixinUser(models.Model):
+    wxUnionid = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"微信用户UnionId")
+    wxOpenId = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"微信用户OpenId")
+    wxName = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"微信用户名称")
+
+    def __unicode__(self):
+        return "%s" % self.wxName
+
+    class Meta:
+        verbose_name = u"微信公众号用户表"
+        verbose_name_plural = u"微信公众号用户表"
+
+
+class WeixinMsg(models.Model):
+    fromUserName = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"用户")
+    createTime = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"时间")
+    msgType = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"消息类型")
+    content = models.TextField(null=True, blank=True, verbose_name=u"消息文本")
+    msgId = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"消息号")
+    createdAt = models.DateTimeField(auto_now_add=True, verbose_name=u"创建时间")
+
+    def __unicode__(self):
+        return "%s" % self.content
+
+    class Meta:
+        verbose_name = u"微信公众号消息表"
+        verbose_name_plural = u"微信公众号消息表"
+
+
 class UserStatus(models.Model):
     key = models.CharField(max_length=50, primary_key=True, verbose_name=u"主键")
     description = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"描述")
@@ -101,3 +130,20 @@ class RaspTemperature(models.Model):
 
     def __unicode__(self):
         return "%s %f" % (self.checkedAt, self.temperature)
+
+
+class SystemConfiguration(models.Model):
+    key = models.CharField(max_length=50, primary_key=True, verbose_name=u"主键")
+    property1 = models.CharField(max_length=50, null=True, blank=True, verbose_name=u"属性1")
+    property2 = models.CharField(max_length=50, null=True, blank=True, verbose_name=u"属性2")
+    value1 = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"值1")
+    value2 = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"值2")
+    text1 = models.TextField(null=True, blank=True, verbose_name=u"文本1")
+    text2 = models.TextField(null=True, blank=True, verbose_name=u"文本2")
+
+    def __unicode__(self):
+        return "%s %s %s" % (self.key, self.property1, self.value1)
+
+    class Meta:
+        verbose_name = u"系统配置表"
+        verbose_name_plural = u"系统配置表"

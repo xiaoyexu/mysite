@@ -8,6 +8,9 @@ urlpatterns = [
     url(r'^api\/login$', views.apiLogin, name='apiLogin'),
     url(r'^rs$', views.rs, name='rs'),
     # End of Json APIs
+    # Wechat backend
+    url(r'^weixin$', views.weixin, name='weixin'),
+    # End of Wechat backend
     # Common process
     url(r'^back$', views.back, name='back'),
     url(r'^logoff$', views.logoff, name='logoff'),

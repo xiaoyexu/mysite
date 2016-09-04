@@ -14,6 +14,7 @@ import pyDes
 import base64
 import hashlib
 import datetime
+import xml.etree.ElementTree as ElementTree
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
@@ -234,6 +235,223 @@ def getPhrase(request, appid, phraseid, default=None):
         else:
             htmlContent = "[%s %s %s]" % (appid, phraseid, lan)
     return htmlContent
+
+
+def sendRequest(url, headers, body):
+    # ssl._create_default_https_context = ssl._create_unverified_context
+    req = urllib2.Request(url)
+    for k, v in headers.items():
+        req.add_header(k, v)
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor)
+    try:
+        response = opener.open(req, body)
+        return (response.code, '', response.read())
+    except urllib2.HTTPError, e:
+        return (e.code, e.reason, e.read())
+    except urllib2.URLError, e:
+        return (None, e.reason, None)
+
+
+def sendRequest2(url, headers, body):
+    # ssl._create_default_https_context = ssl._create_unverified_context
+    req = urllib2.Request(url)
+    for k, v in headers.items():
+        req.add_header(k, v)
+    # Get method by urllib
+    try:
+        response = urllib2.urlopen(req, body)
+        return (response.code, None, response.read())
+    except urllib2.HTTPError, e:
+        return (e.code, e.reason, e.read())
+    except urllib2.URLError, e:
+        return (None, e.reason, None)
+
+
+def getWXToken(appId, secret):
+    url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"
+    url = url % (appId, secret)
+    headers = {}
+    headers['Content-Type'] = 'application/json'
+    body = ""
+    (code, reason, result) = sendRequest(url, headers, body)
+    # Fake result
+    # result = """
+    # {"access_token":"ZTNaZsZqb43FMLBLLnZGhPGA22E4uioreRkzvFIi44NaTvbdIaWvMFP9H0DjfpwkGnK43GMou9vJfxJX-W41fHGG_On0neQYdZMQDbkAzDXH73fkY9LJchAW38l-wQoECIXeACATZO","expires_in":7200}
+    # """
+    return result
+
+
+def getSystemConfigByKey(key, property1=None, property2=None):
+    filter = {}
+    filter['key'] = key
+    if property1:
+        filter['property1'] = property1
+    if property2:
+        filter['property2'] = property2
+    try:
+        sc = SystemConfiguration.objects.get(**filter)
+        result = {}
+        result['property1'] = sc.property1
+        result['property2'] = sc.property2
+        result['value1'] = sc.value1
+        result['value2'] = sc.value2
+        result['text1'] = sc.text1
+        result['text2'] = sc.text2
+        return result
+    except Exception, e:
+        return None
+
+
+def setSystemConfigByKey(key, configDict):
+    try:
+        configDict['key'] = key
+        SystemConfiguration.objects.update_or_create(**configDict)
+        return True
+    except Exception, e:
+        return False
+
+
+# For Weixin backend
+class XmlListConfig(list):
+    def __init__(self, aList):
+        for element in aList:
+            if element:
+                # treat like dict
+                if len(element) == 1 or element[0].tag != element[1].tag:
+                    self.append(XmlDictConfig(element))
+                # treat like list
+                elif element[0].tag == element[1].tag:
+                    self.append(XmlListConfig(element))
+            elif element.text:
+                text = element.text.strip()
+                if text:
+                    self.append(text)
+
+
+class XmlDictConfig(dict):
+    '''
+    Example usage:
+
+    >>> tree = ElementTree.parse('your_file.xml')
+    >>> root = tree.getroot()
+    >>> xmldict = XmlDictConfig(root)
+
+    Or, if you want to use an XML string:
+
+    >>> root = ElementTree.XML(xml_string)
+    >>> xmldict = XmlDictConfig(root)
+
+    And then use xmldict for what it is... a dict.
+    '''
+
+    def __init__(self, parent_element):
+        if parent_element.items():
+            self.update(dict(parent_element.items()))
+        for element in parent_element:
+            if element:
+                # treat like dict - we assume that if the first two tags
+                # in a series are different, then they are all different.
+                if len(element) == 1 or element[0].tag != element[1].tag:
+                    aDict = XmlDictConfig(element)
+                # treat like list - we assume that if the first two tags
+                # in a series are the same, then the rest are the same.
+                else:
+                    # here, we put the list in dictionary; the key is the
+                    # tag name the list elements all share in common, and
+                    # the value is the list itself
+                    aDict = {element[0].tag: XmlListConfig(element)}
+                # if the tag has attributes, add those to the dict
+                if element.items():
+                    aDict.update(dict(element.items()))
+                self.update({element.tag: aDict})
+            # this assumes that if you've got an attribute in a tag,
+            # you won't be having any text. This may or may not be a
+            # good idea -- time will tell. It works for the way we are
+            # currently doing XML configuration files...
+            elif element.items():
+                self.update({element.tag: dict(element.items())})
+            # finally, if there are no child tags and no attributes, extract
+            # the text
+            else:
+                self.update({element.tag: element.text})
+
+
+class WebChat:
+    token = ''
+    debug = False
+
+    def __init__(self, token, debug=False):
+        self.token = token
+        self.debug = debug
+
+    def isValid(self, request):
+        return request.GET.get('echostr', None) != None
+
+    def validateSignature(self, request):
+        signature = request.GET.get('signature', None)
+        log.info('signature %s' % signature)
+        timestamp = request.GET.get('timestamp', None)
+        log.info('timestamp %s' % timestamp)
+        nonce = request.GET.get('nonce', None)
+        log.info('nonce %s' % nonce)
+        signatureArray = [self.token, timestamp, nonce]
+        signatureArray.sort()
+        log.info('signatureArray sorted %s' % signatureArray)
+        tempStr = ''.join(signatureArray)
+        log.info('signStr %s' % tempStr)
+        sha1TempStr = hashlib.sha1(tempStr).hexdigest()
+        log.info('sha1Str %s' % sha1TempStr)
+        return sha1TempStr == signature
+
+    def returnTextResponse(self, toUserName, fromUserName, content, funcFlag=0):
+        response = """
+        <xml>
+  <ToUserName><![CDATA[%(toUserName)s]]></ToUserName>
+  <FromUserName><![CDATA[%(fromUserName)s]]></FromUserName>
+  <CreateTime>%(createTime)s</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[%(content)s]]></Content>
+  <FuncFlag>%(funcFlag)s<FuncFlag>
+</xml>""" % {
+            "toUserName": toUserName,
+            "fromUserName": fromUserName,
+            "createTime": datetime.datetime.now(),
+            "content": content,
+            "funcFlag": funcFlag
+        }
+        return response
+
+    def returnSingleNewsItem(self, title, description, picUrl, url):
+        response = """
+        <item>
+  <Title><![CDATA[%s]]></Title>
+  <Description><![CDATA[%s]]></Description>
+  <PicUrl><![CDATA[%s]]></PicUrl>
+  <Url><![CDATA[%s]]></Url>
+</item>""" % (title, description, picUrl, url)
+        return response
+
+    def returnNewsResponse(self, toUserName, fromUserName, items, funcFlag=0):
+        response = """
+        <xml>
+  <ToUserName><![CDATA[%(toUserName)s]]></ToUserName>
+  <FromUserName><![CDATA[%(fromUserName)s]]></FromUserName>
+  <CreateTime>%(createTime)s</CreateTime>
+  <MsgType><![CDATA[news]]></MsgType>
+  <ArticleCount>%(articleCount)s</ArticleCount>
+  <Articles>
+    %(articles)s
+  </Articles>
+  <FuncFlag>%(funcFlag)s<FuncFlag>
+</xml>""" % {
+            "toUserName": toUserName,
+            "fromUserName": fromUserName,
+            "createTime": datetime.datetime.now(),
+            "articleCount": len(items),
+            "articles": ''.join(items),
+            "funcFlag": funcFlag
+        }
+        return response
 
 
 class WebSite:
