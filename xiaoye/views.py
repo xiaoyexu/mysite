@@ -89,17 +89,40 @@ def app2_1(request):
     return THR(request, 'xiaoye/app2_1.html', {})
 
 
-@requireWebProcess(need_login=False)
 @csrf_exempt
+@requireWebProcess(need_login=False)
 def ajax(request):
     serviceName = request.GET.get('sn', None)
     result = {}
+    filter = {}
+    filter['checkedAt__gte'] = datetime.datetime.now() - datetime.timedelta(days=14)
     if serviceName == 'raspTemp':
-        date = []
-        data = []
-        for rt in RaspTemperature.objects.filter(checkedAt__gte=datetime.datetime.now() - datetime.timedelta(days=14)).all():
-            date.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
-            data.append(rt.temperature)
-        result['date'] = date
-        result['data'] = data
+        filter['model'] = 'B'
+    elif serviceName == 'rasp3Temp':
+        filter['model'] = '3B'
+    else:
+        return ResponseObject(1, u'Invalid parameter').toJSONHttpResponse()
+    date = []
+    data = []
+    for rt in RaspTemperature.objects.filter(**filter).all():
+        date.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
+        data.append(rt.temperature)
+    result['date'] = date
+    result['data'] = data
     return HttpResponse(json.dumps(result))
+
+
+@csrf_exempt
+@requireJSONAPIProcess(need_login=True, need_decrypt=True)
+def rs(request):
+    serviceName = request.dictBody.get('sn', None)
+    serviceData = request.dictBody.get('sd', None)
+    if serviceName == 'recordRaspTemp' and serviceData:
+        temp = serviceData.get('temp', 0)
+        model = serviceData.get('model', None)
+        rt = RaspTemperature()
+        rt.temperature = temp
+        rt.model = model
+        rt.save()
+        return ResponseObject(0).toJSONHttpResponse()
+    return ResponseObject(1, u'Error').toJSONHttpResponse()

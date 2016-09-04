@@ -22,6 +22,9 @@ admin.site.register(User, UserAdmin)
 
 class RaspTemperatureAdmin(admin.ModelAdmin):
     search_fields = (
-        'checkedAt', 'temperature')
+        'checkedAt', 'temperature', 'model')
     list_display = (
-        'checkedAt', 'temperature')
+        'checkedAt', 'temperature', 'model')
+
+
+admin.site.register(RaspTemperature, RaspTemperatureAdmin)

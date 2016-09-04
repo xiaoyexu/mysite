@@ -93,6 +93,7 @@ class AccessLog(models.Model):
 class RaspTemperature(models.Model):
     checkedAt = models.DateTimeField(auto_now_add=True, verbose_name=u"时间")
     temperature = models.FloatField(default=0, null=True, blank=True, verbose_name=u"温度")
+    model = models.CharField(max_length=10, null=True, blank=True, verbose_name=u"型号")
 
     class Meta:
         verbose_name = u"树莓派3温度表"

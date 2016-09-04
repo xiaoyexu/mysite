@@ -12,8 +12,17 @@
         </div>
     </div>
     <div class="row">
-        <div class="box col-md-10 col-md-offset-1">
-            <div id="main" style="height:300px;"></div>
+        <div class="box col-md-5 col-md-offset-1">
+            <div id="line1" style="height:300px;"></div>
+        </div>
+        <div class="box col-md-5">
+            <div id="line2" style="height:300px;"></div>
+            </div>
+
+    </div>
+    <div class="row">
+    <div class="box col-md-10 col-md-offset-1">
+
         </div>
     </div>
     <hr/>
@@ -34,19 +43,26 @@
                     <br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.
                 </p>
             </div>
-
-
         </div>
     </div>
     <script>
-        var myChart = echarts.init(document.getElementById('main'));
-        var newUrl = '/ajax?sn=raspTemp';
+        var myChart = echarts.init(document.getElementById('line1'));
+        var newUrl = '/ajax?sn=rasp3Temp';
         myChart.showLoading();
         $.get(newUrl, function (d) {
             myChart.hideLoading();
             var result = jQuery.parseJSON(d);
-            var option = getEChartLine(result.date, result.data);
+            var option = getEChartLine('三号机',result.date, result.data);
             myChart.setOption(option);
+        });
+        var myChart2 = echarts.init(document.getElementById('line2'));
+        var newUrl2 = '/ajax?sn=raspTemp';
+        myChart2.showLoading();
+        $.get(newUrl2, function (d) {
+            myChart2.hideLoading();
+            var result = jQuery.parseJSON(d);
+            var option = getEChartLine('初号机',result.date, result.data);
+            myChart2.setOption(option);
         });
     </script>
 {% endblock %}

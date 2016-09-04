@@ -56,8 +56,12 @@ import time
 #     p['content'] = phrase[3]
 #     SitePhrase.objects.update_or_create(**p)
 
-for i in xrange(0,10):
-    r = RaspTemperature()
-    r.temperature = random.randint(0,100)
+# for i in xrange(0,10):
+#     r = RaspTemperature()
+#     r.temperature = random.randint(0,100)
+#     r.save()
+#     time.sleep(1)
+
+for r in RaspTemperature.objects.filter(model=None):
+    r.model = '3B'
     r.save()
-    time.sleep(1)

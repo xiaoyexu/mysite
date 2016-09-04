@@ -98,6 +98,26 @@ def decrypt(text, dec=True):
         return text
 
 
+def encrypt(text):
+    try:
+        # 3DES key
+        key = settings.API_3DES_KEY
+        # 3DES Initial vector
+        iv = settings.API_3DES_IV
+        # No padding
+        pad = None
+        # 3DES object
+        des = pyDes.triple_des(key, pyDes.CBC, iv, pad, pyDes.PAD_PKCS5)
+        # Encrytp
+        encryptStr = des.encrypt(text, pad, pyDes.PAD_PKCS5)
+        # Then base64
+        encryptStr = base64.encodestring(encryptStr)
+    except Exception, e:
+        log.error(e.message)
+        encryptStr = ''
+    return encryptStr
+
+
 def requireJSONAPIProcess(need_login=True, need_decrypt=True):
     """
     Decoration for preprocess of each request.

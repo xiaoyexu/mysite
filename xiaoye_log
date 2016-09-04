@@ -7,3 +7,12 @@ ERROR 2016-08-26 05:21:00,264 Expecting property name: line 2 column 1 (char 2)
 ERROR 2016-09-03 16:10:51,706 datetime.datetime(2016, 9, 3, 15, 45, 5, 982601, tzinfo=<UTC>) is not JSON serializable
 ERROR 2016-09-03 17:37:07,935 global name 'timezone' is not defined
 ERROR 2016-09-03 17:37:10,998 global name 'timezone' is not defined
+ERROR 2016-09-04 09:38:12,419 No JSON object could be decoded
+ERROR 2016-09-04 09:39:04,016 No JSON object could be decoded
+ERROR 2016-09-04 09:39:43,038 No JSON object could be decoded
+ERROR 2016-09-04 09:40:06,813 No JSON object could be decoded
+ERROR 2016-09-04 09:40:29,681 No JSON object could be decoded
+ERROR 2016-09-04 09:40:41,718 No JSON object could be decoded
+ERROR 2016-09-04 09:41:04,698 No JSON object could be decoded
+ERROR 2016-09-04 09:41:06,438 No JSON object could be decoded
+ERROR 2016-09-04 10:03:19,088 No JSON object could be decoded

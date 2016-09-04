@@ -6,6 +6,7 @@ urlpatterns = [
     # Json APIs
     url(r'^jsonResult$', views.jsonResult, name='jsonResult'),
     url(r'^api\/login$', views.apiLogin, name='apiLogin'),
+    url(r'^rs$', views.rs, name='rs'),
     # End of Json APIs
     # Common process
     url(r'^back$', views.back, name='back'),

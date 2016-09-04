@@ -69,7 +69,7 @@ String.format = function () {
     return str;
 };
 
-function getEChartLine(data_x, data_y) {
+function getEChartLine(title, data_x, data_y) {
     option = {
             tooltip: {
                 trigger: 'axis',
@@ -79,11 +79,11 @@ function getEChartLine(data_x, data_y) {
             },
             title: {
                 left: 'center',
-                text: '服务器CPU温度'
+                text: title
             },
             legend: {
                 top: 'bottom',
-                data: ['意向']
+                data: ['']
             },
             toolbox: {
                 feature: {
