@@ -139,6 +139,7 @@ def weixin(request):
     """
     log.info('request %s' % request.GET)
     log.info('request body %s' % request.body)
+    responseXML = None
     wc = WebChat(settings.WECHAT_TOKEN)
     if wc.isValid(request) and wc.validateSignature(request):
         return HttpResponse(request.GET.get('echostr', ''))
@@ -146,7 +147,6 @@ def weixin(request):
     root = ElementTree.XML(xml)
     xmldict = XmlDictConfig(root)
     toUserName = xmldict.get('ToUserName', None)
-    fromUserName = xmldict.get('FromUserName', None)
     encryptContent = xmldict.get('Encrypt', None)
     wxAppId = getSystemConfigByKey('WX_APPID')['value1']
     wxSecret = getSystemConfigByKey('WX_SECRET')['value1']
@@ -161,45 +161,13 @@ def weixin(request):
         log.info('%s %s' % (ret, decryp_xml))
         root = ElementTree.XML(decryp_xml)
         xmldict = XmlDictConfig(root)
+    fromUserName = xmldict.get('FromUserName', None)
     msgType = xmldict.get('MsgType', None)
     event = xmldict.get('Event', None)
     eventKey = xmldict.get('EventKey', None)
     createTime = xmldict.get('CreateTime', None)
     msgId = xmldict.get('MsgId', None)
     content = xmldict.get('Content', None)
-    try:
-        m = WeixinMsg()
-        m.fromUserName = fromUserName
-        m.createTime = createTime
-        m.content = content
-        m.msgType = msgType
-        m.msgId = msgId
-        m.save()
-    except Exception, e:
-        log.error(e.message)
-    if msgType == 'event':
-        if event == 'CLICK':
-            pass
-    # Store token and if expired, get lastest one
-    wxAccessTokenConf = getSystemConfigByKey('WX_ACCESS_TOKEN')
-    wxAccessTokenExpConf = getSystemConfigByKey('WX_ACCESS_TOKEN_EXPIRE')
-    wxAccessToken = wxAccessTokenConf.get('value1', None) if wxAccessTokenConf else None
-    isExpired = False
-    if wxAccessTokenExpConf:
-        expireDate = datetime.datetime.strptime(wxAccessTokenExpConf['value1'], '%Y-%m-%d %H:%M:%S')
-        isExpired = datetime.datetime.now() > expireDate
-    if not wxAccessTokenConf or isExpired:
-        result = getWXToken(wxAppId, wxSecret)
-        r = json.loads(result)
-        token = r.get('access_token', None)
-        expires_in = r.get('expires_in', None)
-        setSystemConfigByKey('WX_ACCESS_TOKEN', {'value1': token})
-        setSystemConfigByKey('WX_ACCESS_TOKEN_EXPIRE',
-                             {'value1': (datetime.datetime.now() + datetime.timedelta(seconds=expires_in)).strftime(
-                                 '%Y-%m-%d %H:%M:%S')})
-        wxToken = token
-    log.info('valid token %s' % wxToken)
-    log.info('from user %s' % fromUserName)
     # Check and save user openId
     wu = WeixinUser.objects.filter(wxOpenId=fromUserName)
     if not wu:
@@ -224,5 +192,46 @@ def weixin(request):
         wu = WeixinUser()
         wu.wxOpenId = fromUserName
         wu.save()
-    responseXML = wc.returnTextResponse(fromUserName, toUserName, u'收到')
+    else:
+        wu = wu[0]
+    try:
+        m = WeixinMsg()
+        m.fromUser = wu
+        m.createTime = createTime
+        m.content = content
+        m.msgType = msgType
+        m.msgId = msgId
+        m.event = event
+        m.eventKey = eventKey
+        m.save()
+    except Exception, e:
+        log.error(e.message)
+    if msgType == 'event':
+        if event == 'CLICK':
+            pass
+        elif event == 'subscribe':
+            responseXML = wc.returnTextResponse(fromUserName, toUserName, u'终于等到你')
+    # Store token and if expired, get lastest one
+    wxAccessTokenConf = getSystemConfigByKey('WX_ACCESS_TOKEN')
+    wxAccessTokenExpConf = getSystemConfigByKey('WX_ACCESS_TOKEN_EXPIRE')
+    wxAccessToken = wxAccessTokenConf.get('value1', None) if wxAccessTokenConf else None
+    isExpired = False
+    if wxAccessTokenExpConf:
+        expireDate = datetime.datetime.strptime(wxAccessTokenExpConf['value1'], '%Y-%m-%d %H:%M:%S')
+        isExpired = datetime.datetime.now() > expireDate
+    if not wxAccessTokenConf or isExpired:
+        result = getWXToken(wxAppId, wxSecret)
+        r = json.loads(result)
+        token = r.get('access_token', None)
+        expires_in = r.get('expires_in', None)
+        setSystemConfigByKey('WX_ACCESS_TOKEN', {'value1': token})
+        setSystemConfigByKey('WX_ACCESS_TOKEN_EXPIRE',
+                             {'value1': (datetime.datetime.now() + datetime.timedelta(seconds=expires_in)).strftime(
+                                 '%Y-%m-%d %H:%M:%S')})
+        wxToken = token
+    log.info('valid token %s' % wxToken)
+    log.info('from user %s' % fromUserName)
+
+    if not responseXML:
+        responseXML = wc.returnTextResponse(fromUserName, toUserName, u'收到')
     return HttpResponse(responseXML)

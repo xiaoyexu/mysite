@@ -9,7 +9,7 @@ class WeixinUser(models.Model):
     wxName = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"微信用户名称")
 
     def __unicode__(self):
-        return "%s" % self.wxName
+        return "%s %s" % (self.wxOpenId, self.wxName)
 
     class Meta:
         verbose_name = u"微信公众号用户表"
@@ -17,11 +17,14 @@ class WeixinUser(models.Model):
 
 
 class WeixinMsg(models.Model):
-    fromUserName = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"用户")
+    # fromUserName = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"用户")
+    fromUser = models.ForeignKey('WeixinUser', null=True, blank=True, on_delete=models.SET_NULL, verbose_name=u"用户")
     createTime = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"时间")
     msgType = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"消息类型")
     content = models.TextField(null=True, blank=True, verbose_name=u"消息文本")
     msgId = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"消息号")
+    event = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"事件类型")
+    eventKey = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"事件")
     createdAt = models.DateTimeField(auto_now_add=True, verbose_name=u"创建时间")
 
     def __unicode__(self):
