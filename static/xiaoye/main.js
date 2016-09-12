@@ -69,83 +69,138 @@ String.format = function () {
     return str;
 };
 
-function getEChartLine(title, data_x, data_y) {
+function getEChartLine(title, title_y, data_x, data_y) {
     option = {
-            tooltip: {
-                trigger: 'axis',
-                position: function (pt) {
-                    return [pt[0], '10%'];
-                }
-            },
-            title: {
-                left: 'center',
-                text: title
-            },
-            legend: {
-                top: 'bottom',
-                data: ['']
-            },
-            toolbox: {
-                feature: {
-                    dataZoom: {
-                        yAxisIndex: 'none'
-                    },
-                    restore: {},
-                    saveAsImage: {}
-                }
-            },
-            xAxis: {
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
+        title: {
+            left: 'center',
+            text: title
+        },
+        legend: {
+            top: 'bottom',
+            data: ['']
+        },
+        toolbox: {
+            feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: data_x
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%']
+        },
+        dataZoom: [{
+            type: 'inside',
+            start: 0,
+            end: 10
+        }, {
+            start: 0,
+            end: 10,
+            handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+            handleSize: '80%',
+            handleStyle: {
+                color: '#fff',
+                shadowBlur: 3,
+                shadowColor: 'rgba(0, 0, 0, 0.6)',
+                shadowOffsetX: 2,
+                shadowOffsetY: 2
+            }
+        }],
+        series: [
+            {
+                name: title_y,
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                sampling: 'average',
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(255, 70, 131)'
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0,
+                            color: 'rgb(255, 158, 68)'
+                        }, {
+                            offset: 1,
+                            color: 'rgb(255, 70, 131)'
+                        }])
+                    }
+                },
+                data: data_y
+            }
+        ]
+    };
+    return option;
+}
+
+
+function getEChartLineForTempAndHum(title, data_x, series1, series2) {
+    option = {
+        title: {
+            text: title
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['温度', '湿度']
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
                 type: 'category',
                 boundaryGap: false,
                 data: data_x
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                name: '温度',
+                type: 'line',
+                stack: '总量',
+                areaStyle: {normal: {}},
+                data: series1
             },
-            yAxis: {
-                type: 'value',
-                boundaryGap: [0, '100%']
-            },
-            dataZoom: [{
-                type: 'inside',
-                start: 0,
-                end: 10
-            }, {
-                start: 0,
-                end: 10,
-                handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-                handleSize: '80%',
-                handleStyle: {
-                    color: '#fff',
-                    shadowBlur: 3,
-                    shadowColor: 'rgba(0, 0, 0, 0.6)',
-                    shadowOffsetX: 2,
-                    shadowOffsetY: 2
-                }
-            }],
-            series: [
-                {
-                    name: '摄氏温度',
-                    type: 'line',
-                    smooth: true,
-                    symbol: 'none',
-                    sampling: 'average',
-                    itemStyle: {
-                        normal: {
-                            color: 'rgb(255, 70, 131)'
-                        }
-                    },
-                    areaStyle: {
-                        normal: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                offset: 0,
-                                color: 'rgb(255, 158, 68)'
-                            }, {
-                                offset: 1,
-                                color: 'rgb(255, 70, 131)'
-                            }])
-                        }
-                    },
-                    data: data_y
-                }
-            ]
-        };
+            {
+                name: '湿度',
+                type: 'line',
+                stack: '总量',
+                areaStyle: {normal: {}},
+                data: series2
+            }
+        ]
+    };
     return option;
 }

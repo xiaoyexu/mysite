@@ -30,6 +30,16 @@ class RaspTemperatureAdmin(admin.ModelAdmin):
 admin.site.register(RaspTemperature, RaspTemperatureAdmin)
 
 
+class RoomTempAdmin(admin.ModelAdmin):
+    search_fields = (
+        'checkedAt', 'temperature', 'humidity')
+    list_display = (
+        'checkedAt', 'temperature', 'humidity')
+
+
+admin.site.register(RoomTemp, RoomTempAdmin)
+
+
 class WeixinUserAdmin(admin.ModelAdmin):
     search_fields = ('wxUnionid', 'wxOpenId', 'wxName')
     list_display = ('wxUnionid', 'wxOpenId', 'wxName')

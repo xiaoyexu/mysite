@@ -2,6 +2,10 @@
 from django.shortcuts import render
 from xiaoye.common import *
 import WXBizMsgCrypt
+import PIL.Image as Image, PIL.ImageFont as ImageFont, PIL.ImageDraw as ImageDraw
+import re
+import random
+
 
 ##### JSON API #####
 
@@ -94,21 +98,35 @@ def app2_1(request):
 def ajax(request):
     serviceName = request.GET.get('sn', None)
     result = {}
-    filter = {}
-    filter['checkedAt__gte'] = datetime.datetime.now() - datetime.timedelta(days=14)
-    if serviceName == 'raspTemp':
-        filter['model'] = 'B'
-    elif serviceName == 'rasp3Temp':
-        filter['model'] = '3B'
+    if serviceName == 'raspTemp' or serviceName == 'rasp3Temp':
+        filter = {}
+        filter['checkedAt__gte'] = datetime.datetime.now() - datetime.timedelta(days=14)
+        if serviceName == 'raspTemp':
+            filter['model'] = 'B'
+        elif serviceName == 'rasp3Temp':
+            filter['model'] = '3B'
+        date = []
+        data = []
+        for rt in RaspTemperature.objects.filter(**filter).all():
+            date.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
+            data.append(rt.temperature)
+        result['date'] = date
+        result['data'] = data
+    elif serviceName == 'roomTempHum':
+        filter = {}
+        filter['checkedAt__gte'] = datetime.datetime.now() - datetime.timedelta(days=14)
+        dateList = []
+        tempList = []
+        humList = []
+        for rt in RoomTemp.objects.filter(**filter).all():
+            dateList.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
+            tempList.append(rt.temperature)
+            humList.append(rt.humidity)
+        result['date'] = dateList
+        result['temp'] = tempList
+        result['hum'] = humList
     else:
         return ResponseObject(1, u'Invalid parameter').toJSONHttpResponse()
-    date = []
-    data = []
-    for rt in RaspTemperature.objects.filter(**filter).all():
-        date.append(timezone.localtime(rt.checkedAt).strftime("%Y-%m-%d %H:%M:%S"))
-        data.append(rt.temperature)
-    result['date'] = date
-    result['data'] = data
     return HttpResponse(json.dumps(result))
 
 
@@ -125,11 +143,48 @@ def rs(request):
         rt.model = model
         rt.save()
         return ResponseObject(0).toJSONHttpResponse()
+    elif serviceName == 'recordTempHum' and serviceData:
+        temp = serviceData.get('temp', 0)
+        hum = serviceData.get('hum', 0)
+        rt = RoomTemp()
+        rt.temperature = temp
+        rt.humidity = hum
+        rt.save()
+        return ResponseObject(0).toJSONHttpResponse()
     return ResponseObject(1, u'Error').toJSONHttpResponse()
 
 
+def genImageFromText(text, imageName):
+    actLength = 0
+    lines = []
+    j = 0
+    subline = []
+    for i in range(len(text)):
+        j = j + 1
+        if re.match('[\\w\\s\\d]', text[i]):
+            actLength = actLength + 1
+        else:
+            actLength = actLength + 2
+        subline.append(text[i])
+        if actLength % 14 == 0:
+            lines.append(''.join(subline))
+            subline = []
+    if subline:
+        lines.append(''.join(subline))
+    height = len(lines) * 80
+    im = Image.new("RGB", (360, height), (205, 255, 255))
+    dr = ImageDraw.Draw(im)
+    font = ImageFont.truetype("./xiaoye/MSYHBD.TTF", 50)
+    y = 0
+    for l in lines:
+        dr.text((10, 5 + y), l, font=font, fill="#4e6cb4")
+        y = y + 80
+    im.show()
+    im.save(imageName)
+
+
 @csrf_exempt
-def weixin(request):
+def weixin_func(request):
     """
     Used for weixin public platform call back. -> mp.weixin.qq.com
     When user followed, save user openId in our table
@@ -141,9 +196,14 @@ def weixin(request):
     log.info('request body %s' % request.body)
     responseXML = None
     wc = WebChat(settings.WECHAT_TOKEN)
-    if wc.isValid(request) and wc.validateSignature(request):
-        return HttpResponse(request.GET.get('echostr', ''))
+    if wc.isValid(request):
+        if wc.validateSignature(request):
+            return HttpResponse(request.GET.get('echostr', ''))
+        else:
+            return HttpResponse(u'你这么帅，赶紧从我面前消失')
     xml = request.body
+    if not xml:
+        return HttpResponse(u'你这么帅，赶紧从我面前消失')
     root = ElementTree.XML(xml)
     xmldict = XmlDictConfig(root)
     toUserName = xmldict.get('ToUserName', None)
@@ -206,6 +266,14 @@ def weixin(request):
         m.save()
     except Exception, e:
         log.error(e.message)
+    filename = random.randint(1, 999)
+    log.info('%d', filename)
+    filename = '%s%s' % (fromUserName, filename)
+    filename = hashlib.md5(filename).hexdigest()
+    path = 'http://xiaoyexu.iok.la/static/%s.jpg' % filename
+    genImageFromText(content, './static/%s.jpg' % filename)
+    messageResponse = """您的山寨大字已经准备好 <a href="%s">在这里</a>""" % path
+    responseXML = wc.returnTextResponse(fromUserName, toUserName, messageResponse)
     if msgType == 'event':
         if event == 'CLICK':
             pass
@@ -235,3 +303,12 @@ def weixin(request):
     if not responseXML:
         responseXML = wc.returnTextResponse(fromUserName, toUserName, u'收到')
     return HttpResponse(responseXML)
+
+
+@csrf_exempt
+def weixin(request):
+    try:
+        return weixin_func(request)
+    except Exception, e:
+        log.error(e.message)
+        return HttpResponse('')

@@ -135,6 +135,20 @@ class RaspTemperature(models.Model):
         return "%s %f" % (self.checkedAt, self.temperature)
 
 
+# Temperature & Humidity
+class RoomTemp(models.Model):
+    checkedAt = models.DateTimeField(auto_now_add=True, verbose_name=u"时间")
+    temperature = models.FloatField(default=0, null=True, blank=True, verbose_name=u"温度")
+    humidity = models.FloatField(default=0, null=True, blank=True, verbose_name=u"湿度")
+
+    class Meta:
+        verbose_name = u"温湿度表"
+        verbose_name_plural = u"温湿度表"
+
+    def __unicode__(self):
+        return "%s %f %f" % (self.checkedAt, self.temperature, self.humidity)
+
+
 class SystemConfiguration(models.Model):
     key = models.CharField(max_length=50, primary_key=True, verbose_name=u"主键")
     property1 = models.CharField(max_length=50, null=True, blank=True, verbose_name=u"属性1")

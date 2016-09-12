@@ -15,6 +15,9 @@ import base64
 import hashlib
 import datetime
 import xml.etree.ElementTree as ElementTree
+import re
+import bs4
+import urlparse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
@@ -482,3 +485,63 @@ home = Application()
 
 webSite = WebSite()
 webSite.apps['home'] = home
+
+
+class Crawler:
+    def __init__(self):
+        pass
+
+    def __del__(self):
+        pass
+
+    def dbcommit(self):
+        pass
+
+    def getentryid(self, table, field, value, createnew=True):
+        pass
+
+    def addtoindex(self, url, soup):
+        print 'Indexing %s' % url
+
+    def gettextonly(self, soup):
+        return None
+
+    def separatewords(self, text):
+        return None
+
+    def isindexed(self, url):
+        return False
+
+    def addlinkref(self, urlForm, urlTo, linkText):
+        pass
+
+    def crawl(self, pages, depth=2):
+        for i in range(depth):
+            newpages = set()
+            for page in pages:
+                (code, reason, result) = sendRequest(page, {}, None)
+                if code != 200:
+                    print "Could not open %s" % page
+                    continue
+                print "%s %s %s" % (code, reason, result)
+                soup = bs4.BeautifulSoup(result)
+                self.addtoindex(page, soup)
+                links = soup('a')
+                # print links
+                for link in links:
+                    if ('href' in dict(link.attrs)):
+                        url = urlparse.urljoin(page, link['href'])
+                        print 'urljoin %s' % url
+                        if url.find("'") != -1:
+                            continue
+                        url = url.split('#')[0]
+                        if url[0:4] == 'http' and not self.isindexed(url):
+                            print url
+                            newpages.add(url)
+                        linkText = self.gettextonly(link)
+                        self.addlinkref(page, url, linkText)
+                    self.dbcommit()
+                pages = newpages
+
+    def createindextables(self):
+        pass
