@@ -135,7 +135,7 @@
             var result = jQuery.parseJSON(d);
             option = {
                 legend: {
-                    data: ['Input', 'Hidden', 'Output']
+                    data: ['输入', '隐藏', '输出']
                 },
                 toolbox: {
                     feature: {
@@ -151,6 +151,16 @@
                     layout: 'force',
                     symbolSize: 20,
                     animation: false,
+                    edgeSymbol: ['circle', 'arrow'],
+                    edgeLabel: {
+                        normal: {
+                            textStyle: {
+                                fontSize: 10
+                            },
+                            formatter: "{b}",
+                            show: false
+                        }
+                    },
                     label: {
                         normal: {
                             position: 'right',
@@ -165,13 +175,13 @@
                     }),
                     categories: result.categories,
                     force: {
-                        initLayout: 'circular',
-                        gravity: 0.1,
+                        //initLayout: 'circular',
+                        //gravity: 0.1,
                         // repulsion: 20,
-                        edgeLength: 100,
-                        repulsion: 500,
-                        roam: true
+                        //edgeLength: 100,
+                        repulsion: 500
                     },
+                    roam: true,
                     edges: result.links
                 }]
             };

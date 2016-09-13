@@ -188,10 +188,27 @@ class MLP:
 
     def trainWith(self, inputStrList, outputStrList, outputStr):
         # setup initial nodes
-        inputs = [InputValue.objects.get(value=a)
-                  for a in inputStrList]
-        outputs = [OutputValue.objects.get(value=a)
-                   for a in outputStrList]
+        inputs = []
+        outputs = []
+        for a in inputStrList:
+            input, created = InputValue.objects.get_or_create(value=a)
+            if created:
+                input.value = a
+                input.save()
+            inputs.append(input)
+
+        for a in outputStrList:
+            output, created = OutputValue.objects.get_or_create(value=a)
+            if created:
+                output.value = a
+                output.save()
+            outputs.append(output)
+
+        # inputs = [InputValue.objects.get(value=a)
+        #           for a in inputStrList]
+        # outputs = [OutputValue.objects.get(value=a)
+        #            for a in outputStrList]
+
         output = [o for o in outputs if o.value == outputStr][0]
         # print inputs
         # print outputs
@@ -214,34 +231,32 @@ class MLP:
 
 def demo1():
     mlp = MLP()
-    mlp.clear()
+    clear = False
+    if clear:
+        mlp.clear()
+        inputStr = [u'热', u'冷', u'饱', u'饿']
+        for v in inputStr:
+            i = InputValue()
+            i.value = v
+            i.save()
+        outputStr = [u'哭', u'不哭不笑', u'笑']
+        for v in outputStr:
+            o = OutputValue()
+            o.value = v
+            o.save()
 
-    # setup input A,B, output X,Y
-    # inputStr = ['Good', 'Bad', 'Nice', 'Sad', 'Happy', 'Story', 'Fine']
-
-    inputStr = [u'热', u'冷', u'饱', u'饿']
-    for v in inputStr:
-        i = InputValue()
-        i.value = v
-        i.save()
-    #
-    # outputStr = ['Commendatory', 'Neutral', 'Derogatory']
-    outputStr = [u'哭', u'不哭不笑', u'笑']
-    for v in outputStr:
-        o = OutputValue()
-        o.value = v
-        o.save()
-
-    mlp.trainWith([u'冷'], [u'哭', u'不哭不笑'], u'哭')
-    mlp.trainWith([u'冷',u'饿'], [u'哭', u'不哭不笑'], u'哭')
-    mlp.trainWith([u'热',u'饱'], [u'哭', u'不哭不笑', u'笑'], u'笑')
+    for i in range(0):
+        mlp.trainWith([u'冷',u'饱'], [u'哭', u'不哭不笑'], u'不哭不笑')
+        mlp.trainWith([u'玩'], [u'笑', u'不哭不笑'], u'笑')
+        # mlp.trainWith([u'冷',u'饿'], [u'哭', u'不哭不笑'], u'哭')
+        # mlp.trainWith([u'热',u'饱'], [u'哭', u'不哭不笑', u'笑'], u'笑')
 
     # trainWith(['Good'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
     # trainWith(['Good', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
     # trainWith(['Bad', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Derogatory')
     # trainWith(['Nice', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
     #
-    # getResult(['Story'], ['Commendatory', 'Neutral', 'Derogatory'])
+    mlp.showResult([u'玩',u'冷'], [u'哭', u'不哭不笑', u'笑'])
 
 def demo2():
     mlp = MLP()
@@ -269,4 +284,4 @@ def demo2():
         mlp.trainWith([inputStr[i]], ['T%d' % newTemp], 'T%d' % newTemp)
 
 
-demo2()
+demo1()

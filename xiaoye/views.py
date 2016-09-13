@@ -138,7 +138,7 @@ def ajax(request):
             inputLocDict[model.id] = n
             nodeList.append({
                 "name": model.value,
-                "value": 1,
+                "value": 0.,
                 "category": 0
             })
         k = HiddenNode.objects.all().count()
@@ -147,7 +147,7 @@ def ajax(request):
             hiddenLocDict[model.id] = n + m
             nodeList.append({
                 "name": model.hiddenKey,
-                "value": 1,
+                "value": 0,
                 "category": 1
             })
         for n in range(OutputValue.objects.all().count()):
@@ -155,10 +155,10 @@ def ajax(request):
             outputLocDict[model.id] = n + m + k
             nodeList.append({
                 "name": model.value,
-                "value": 1,
+                "value": 0,
                 "category": 2
             })
-        print nodeList
+        # print nodeList
 
         for model in InputHiddenMapping.objects.all():
             source = inputLocDict[model.inputValue.id]
@@ -169,6 +169,7 @@ def ajax(request):
                 "target": target,
                 "lineStyle": {
                     "normal": {
+                        "color": "#cac",
                         "width": weight,
                         "curveness": 0.2
                     }
@@ -184,30 +185,34 @@ def ajax(request):
                 "target": target,
                 "lineStyle": {
                     "normal": {
+                        "color": "#acc",
                         "width": weight,
                         "curveness": 0.2
                     }
                 }
             })
-        print linkList
+        # print linkList
 
         result = {
             "type": "force",
             "categories": [
                 {
-                    "name": "Input",
-                    "keyword": {},
-                    "base": "Input"
+                    "name": u"输入"
+                    ,
+                    # "keyword": {},
+                    # "base": "Input"
                 },
                 {
-                    "name": "Hidden",
-                    "keyword": {},
-                    "base": "Hidden"
+                    "name": u"隐藏"
+                    # ,
+                    # "keyword": {},
+                    # "base": "Hidden"
                 },
                 {
-                    "name": "Output",
-                    "keyword": {},
-                    "base": "Output"
+                    "name": u"输出"
+                    # ,
+                    # "keyword": {},
+                    # "base": "Output"
                 }
             ],
             "nodes": nodeList,

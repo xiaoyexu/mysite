@@ -22,5 +22,5 @@ dr = re.compile(r'<[^>]+>', re.S)
 dd = dr.sub('', str(soup('em')[2]))
 temp = dd
 dd = dr.sub('', str(soup('span')[2]))
-hum =  re.match('[^1-9]*(\d*)?[^1-9]*', dd).groups()[0]
+hum = re.match('[^1-9]*(\d*)?[^1-9]*', dd).groups()[0]
 print '->%s %s' % (temp, hum)
