@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ElementTree
 import re
 import bs4
 import urlparse
+import random
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
@@ -168,6 +169,7 @@ def requireJSONAPIProcess(need_login=True, need_decrypt=True):
                 return view_func(*args, **kwargs)
             except Exception, e:
                 log.error(e.message)
+                print e.message
                 return ResponseObject(2000, '%s' % e.message).toJSONHttpResponse()
 
         return check
@@ -206,6 +208,7 @@ def requireWebProcess(need_login=True):
                 return view_func(*args, **kwargs)
             except Exception, e:
                 log.error(e.message)
+                print e.message
                 return THR(request, 'xiaoye/error.html', {'error': e.message})
 
         return check

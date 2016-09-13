@@ -62,3 +62,38 @@ class WeixinMsgAdmin(admin.ModelAdmin):
 
 
 admin.site.register(WeixinMsg, WeixinMsgAdmin)
+
+
+class InputValueAdmin(admin.ModelAdmin):
+    list_display = ('value', 'weight')
+
+
+admin.site.register(InputValue, InputValueAdmin)
+
+
+class HiddenNodeAdmin(admin.ModelAdmin):
+    list_display = ('hiddenKey',)
+
+
+admin.site.register(HiddenNode, HiddenNodeAdmin)
+
+
+class OutputValueAdmin(admin.ModelAdmin):
+    list_display = ('value',)
+
+
+admin.site.register(OutputValue, OutputValueAdmin)
+
+
+class InputHiddenMappingAdmin(admin.ModelAdmin):
+    list_display = ('inputValue', 'hiddenNode', 'weight')
+
+
+admin.site.register(InputHiddenMapping, InputHiddenMappingAdmin)
+
+
+class HiddenOutputMappingAdmin(admin.ModelAdmin):
+    list_display = ('hiddenNode', 'outputValue', 'weight')
+
+
+admin.site.register(HiddenOutputMapping, HiddenOutputMappingAdmin)

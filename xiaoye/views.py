@@ -125,6 +125,95 @@ def ajax(request):
         result['date'] = dateList
         result['temp'] = tempList
         result['hum'] = humList
+    elif serviceName == 'mlp':
+        inputLocDict = {}
+        hiddenLocDict = {}
+        outputLocDict = {}
+        nodeList = []
+        linkList = []
+
+        m = InputValue.objects.all().count()
+        for n in range(m):
+            model = InputValue.objects.all()[n]
+            inputLocDict[model.id] = n
+            nodeList.append({
+                "name": model.value,
+                "value": 1,
+                "category": 0
+            })
+        k = HiddenNode.objects.all().count()
+        for n in range(k):
+            model = HiddenNode.objects.all()[n]
+            hiddenLocDict[model.id] = n + m
+            nodeList.append({
+                "name": model.hiddenKey,
+                "value": 1,
+                "category": 1
+            })
+        for n in range(OutputValue.objects.all().count()):
+            model = OutputValue.objects.all()[n]
+            outputLocDict[model.id] = n + m + k
+            nodeList.append({
+                "name": model.value,
+                "value": 1,
+                "category": 2
+            })
+        print nodeList
+
+        for model in InputHiddenMapping.objects.all():
+            source = inputLocDict[model.inputValue.id]
+            target = hiddenLocDict[model.hiddenNode.id]
+            weight = model.weight * 5.0
+            linkList.append({
+                "source": source,
+                "target": target,
+                "lineStyle": {
+                    "normal": {
+                        "width": weight,
+                        "curveness": 0.2
+                    }
+                }
+            })
+
+        for model in HiddenOutputMapping.objects.all():
+            source = hiddenLocDict[model.hiddenNode.id]
+            target = outputLocDict[model.outputValue.id]
+            weight = model.weight * 5.0
+            linkList.append({
+                "source": source,
+                "target": target,
+                "lineStyle": {
+                    "normal": {
+                        "width": weight,
+                        "curveness": 0.2
+                    }
+                }
+            })
+        print linkList
+
+        result = {
+            "type": "force",
+            "categories": [
+                {
+                    "name": "Input",
+                    "keyword": {},
+                    "base": "Input"
+                },
+                {
+                    "name": "Hidden",
+                    "keyword": {},
+                    "base": "Hidden"
+                },
+                {
+                    "name": "Output",
+                    "keyword": {},
+                    "base": "Output"
+                }
+            ],
+            "nodes": nodeList,
+            "links": linkList
+        }
+
     else:
         return ResponseObject(1, u'Invalid parameter').toJSONHttpResponse()
     return HttpResponse(json.dumps(result))

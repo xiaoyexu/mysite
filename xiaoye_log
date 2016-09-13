@@ -16,3 +16,21 @@ ERROR 2016-09-04 09:40:41,718 No JSON object could be decoded
 ERROR 2016-09-04 09:41:04,698 No JSON object could be decoded
 ERROR 2016-09-04 09:41:06,438 No JSON object could be decoded
 ERROR 2016-09-04 10:03:19,088 No JSON object could be decoded
+ERROR 2016-09-13 10:12:22,723 'HiddenNode' object has no attribute 'value'
+ERROR 2016-09-13 10:13:22,980 'HiddenNode' object has no attribute 'value'
+ERROR 2016-09-13 10:14:13,386 'HiddenNode' object has no attribute 'value'
+ERROR 2016-09-13 10:14:39,996 'HiddenNode' object has no attribute 'value'
+ERROR 2016-09-13 10:15:43,535 'HiddenNode' object has no attribute 'value'
+ERROR 2016-09-13 10:23:10,201 unhashable type: 'dict'
+ERROR 2016-09-13 10:24:16,176 unhashable type: 'dict'
+ERROR 2016-09-13 10:25:18,124 unhashable type: 'dict'
+ERROR 2016-09-13 10:29:01,084 unhashable type: 'dict'
+ERROR 2016-09-13 10:30:16,717 unhashable type: 'dict'
+ERROR 2016-09-13 10:35:13,671 unhashable type: 'dict'
+ERROR 2016-09-13 10:38:15,677 123
+ERROR 2016-09-13 10:38:52,523 123
+ERROR 2016-09-13 10:39:53,657 123
+ERROR 2016-09-13 10:42:54,456 123
+ERROR 2016-09-13 10:46:06,849 123
+ERROR 2016-09-13 10:46:19,809 126
+ERROR 2016-09-13 10:47:03,591 126

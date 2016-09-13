@@ -4,53 +4,53 @@
 {% block title %}{% PhraseTag default home %}{% endblock %}
 {% block body %}
     <div class="row">
-        <div id="myCarousel" class="carousel slide">
-            <ol class="carousel-indicators">
-                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                <li data-target="#myCarousel" data-slide-to="1"></li>
-                <li data-target="#myCarousel" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner" style="height: 180px">
-                <div class="item active">
-                    {#                    <img src="/wp-content/uploads/2014/07/slide1.png" alt="First slide">#}
-                    <div class="box col-md-12">
-                        {#                        <div class="jumbotron">#}
-                        <h1>徐晓烨的网站</h1>
-
-                        <p>请自行脑补华丽的标题……我们缺UI</p>
-                        {#                        </div>#}
-                    </div>
-                </div>
-                <div class="item">
-                    {#                    <img src="/wp-content/uploads/2014/07/slide2.png" alt="Second slide">#}
-
-                    <div class="box col-md-12">
-                        {#                        <div class="jumbotron2">#}
-                        <h1>异次元标题</h1>
-
-                        <p>完全不知道这里写什么</p>
-                        {#                        </div>#}
-                    </div>
-                </div>
-                <div class="item">
-                    {#                    <img src="/wp-content/uploads/2014/07/slide3.png" alt="Third slide">#}
-                    <div class="box col-md-12">
-                        {#                        <div class="jumbotron2">#}
-                        <h1>异异次次元标题</h1>
-
-                        <p>更加完全不知道写神马</p>
-                        {#                        </div>#}
-                    </div>
-                </div>
-            </div>
-            <!-- 轮播（Carousel）导航 -->
-            <a class="carousel-control left" href="#myCarousel"
-               data-slide="prev">&lsaquo;
-            </a>
-            <a class="carousel-control right" href="#myCarousel"
-               data-slide="next">&rsaquo;
-            </a>
-        </div>
+        {#        <div id="myCarousel" class="carousel slide">#}
+        {#            <ol class="carousel-indicators">#}
+        {#                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>#}
+        {#                <li data-target="#myCarousel" data-slide-to="1"></li>#}
+        {#                <li data-target="#myCarousel" data-slide-to="2"></li>#}
+        {#            </ol>#}
+        {#            <div class="carousel-inner" style="height: 180px">#}
+        {#                <div class="item active">#}
+        {#                    <img src="/wp-content/uploads/2014/07/slide1.png" alt="First slide">#}
+        {#                    <div class="box col-md-12">#}
+        {#                        <div class="jumbotron">#}
+        {#                        <h1>徐晓烨的网站</h1>#}
+        {##}
+        {#                        <p>请自行脑补华丽的标题……我们缺UI</p>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#                <div class="item">#}
+        {#                    <img src="/wp-content/uploads/2014/07/slide2.png" alt="Second slide">#}
+        {##}
+        {#                    <div class="box col-md-12">#}
+        {#                        <div class="jumbotron2">#}
+        {#                        <h1>异次元标题</h1>#}
+        {##}
+        {#                        <p>完全不知道这里写什么</p>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#                <div class="item">#}
+        {#                    <img src="/wp-content/uploads/2014/07/slide3.png" alt="Third slide">#}
+        {#                    <div class="box col-md-12">#}
+        {#                        <div class="jumbotron2">#}
+        {#                        <h1>异异次次元标题</h1>#}
+        {##}
+        {#                        <p>更加完全不知道写神马</p>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            <!-- 轮播（Carousel）导航 -->#}
+        {#            <a class="carousel-control left" href="#myCarousel"#}
+        {#               data-slide="prev">&lsaquo;#}
+        {#            </a>#}
+        {#            <a class="carousel-control right" href="#myCarousel"#}
+        {#               data-slide="next">&rsaquo;#}
+        {#            </a>#}
+        {#        </div>#}
     </div>
     {#    <div class="row">#}
     {#        <div class="box col-md-6">#}
@@ -60,6 +60,11 @@
     {#            <div id="line2" style="height:300px;"></div>#}
     {#        </div>#}
     {#    </div>#}
+    <div class="row">
+        <div class="box col-md-12">
+            <div id="relationGraph" style="height: 500px;"></div>
+        </div>
+    </div>
     <div class="row">
         <div class="box col-md-6">
             <div id="line3" style="height: 300px;"></div>
@@ -89,24 +94,24 @@
         </div>
     </div>
     <script>
-{#        var myChart = echarts.init(document.getElementById('line1'));#}
-{#        var newUrl = '/ajax?sn=rasp3Temp';#}
-{#        myChart.showLoading();#}
-{#        $.get(newUrl, function (d) {#}
-{#            myChart.hideLoading();#}
-{#            var result = jQuery.parseJSON(d);#}
-{#            var option = getEChartLine('三号机', '摄氏温度', result.date, result.data);#}
-{#            myChart.setOption(option);#}
-{#        });#}
-{#        var myChart2 = echarts.init(document.getElementById('line2'));#}
-{#        var newUrl2 = '/ajax?sn=raspTemp';#}
-{#        myChart2.showLoading();#}
-{#        $.get(newUrl2, function (d) {#}
-{#            myChart2.hideLoading();#}
-{#            var result = jQuery.parseJSON(d);#}
-{#            var option = getEChartLine('初号机', '摄氏温度', result.date, result.data);#}
-{#            myChart2.setOption(option);#}
-{#        });#}
+        {#        var myChart = echarts.init(document.getElementById('line1'));#}
+        {#        var newUrl = '/ajax?sn=rasp3Temp';#}
+        {#        myChart.showLoading();#}
+        {#        $.get(newUrl, function (d) {#}
+        {#            myChart.hideLoading();#}
+        {#            var result = jQuery.parseJSON(d);#}
+        {#            var option = getEChartLine('三号机', '摄氏温度', result.date, result.data);#}
+        {#            myChart.setOption(option);#}
+        {#        });#}
+        {#        var myChart2 = echarts.init(document.getElementById('line2'));#}
+        {#        var newUrl2 = '/ajax?sn=raspTemp';#}
+        {#        myChart2.showLoading();#}
+        {#        $.get(newUrl2, function (d) {#}
+        {#            myChart2.hideLoading();#}
+        {#            var result = jQuery.parseJSON(d);#}
+        {#            var option = getEChartLine('初号机', '摄氏温度', result.date, result.data);#}
+        {#            myChart2.setOption(option);#}
+        {#        });#}
         var myChart3 = echarts.init(document.getElementById('line3'));
         var myChart4 = echarts.init(document.getElementById('line4'));
         var newUrl3 = '/ajax?sn=roomTempHum';
@@ -120,6 +125,57 @@
             myChart3.setOption(option);
             var option2 = getEChartLine('', '湿度', result.date, result.hum);
             myChart4.setOption(option2);
+        });
+
+        var myChart5 = echarts.init(document.getElementById('relationGraph'));
+        var newUrl5 = '/ajax?sn=mlp';
+        myChart5.showLoading();
+        $.get(newUrl5, function (d) {
+            myChart5.hideLoading();
+            var result = jQuery.parseJSON(d);
+            option = {
+                legend: {
+                    data: ['Input', 'Hidden', 'Output']
+                },
+                toolbox: {
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [{
+                    type: 'graph',
+                    layout: 'force',
+                    symbolSize: 20,
+                    animation: false,
+                    label: {
+                        normal: {
+                            position: 'right',
+                            formatter: '{b}',
+                            show: true
+                        }
+                    },
+                    draggable: true,
+                    data: result.nodes.map(function (node, idx) {
+                        node.id = idx;
+                        return node;
+                    }),
+                    categories: result.categories,
+                    force: {
+                        initLayout: 'circular',
+                        gravity: 0.1,
+                        // repulsion: 20,
+                        edgeLength: 100,
+                        repulsion: 500,
+                        roam: true
+                    },
+                    edges: result.links
+                }]
+            };
+            myChart5.setOption(option);
         });
     </script>
 {% endblock %}

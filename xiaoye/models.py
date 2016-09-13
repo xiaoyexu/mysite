@@ -164,3 +164,64 @@ class SystemConfiguration(models.Model):
     class Meta:
         verbose_name = u"系统配置表"
         verbose_name_plural = u"系统配置表"
+
+
+# MLP
+class InputValue(models.Model):
+    value = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"输入值")
+    weight = models.FloatField(default=1, verbose_name=u"输入端权重")
+
+    def __unicode__(self):
+        return "%s %f" % (self.value, self.weight)
+
+    class Meta:
+        verbose_name = u"输入信息表"
+        verbose_name_plural = u"输入信息表"
+
+
+class HiddenNode(models.Model):
+    hiddenKey = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"节点主键")
+
+    def __unicode__(self):
+        return "%s" % (self.hiddenKey,)
+
+    class Meta:
+        verbose_name = u"隐藏节点表"
+        verbose_name_plural = u"隐藏节点表"
+
+
+class OutputValue(models.Model):
+    value = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"输出值")
+
+    def __unicode__(self):
+        return "%s" % (self.value,)
+
+    class Meta:
+        verbose_name = u"输出信息表"
+        verbose_name_plural = u"输出信息表"
+
+
+class InputHiddenMapping(models.Model):
+    inputValue = models.ForeignKey('InputValue', verbose_name=u"输入")
+    hiddenNode = models.ForeignKey('HiddenNode', verbose_name=u"节点")
+    weight = models.FloatField(default=1, verbose_name=u"权重")
+
+    def __unicode__(self):
+        return "%s %s %f" % (self.inputValue.value, self.hiddenNode.hiddenKey, self.weight)
+
+    class Meta:
+        verbose_name = u"输入－隐藏关联表"
+        verbose_name_plural = u"输入－隐藏关联表"
+
+
+class HiddenOutputMapping(models.Model):
+    hiddenNode = models.ForeignKey('HiddenNode', verbose_name=u"节点")
+    outputValue = models.ForeignKey('OutputValue', verbose_name=u"输出")
+    weight = models.FloatField(default=1, verbose_name=u"权重")
+
+    def __unicode__(self):
+        return "%s %s %f" % (self.hiddenNode.hiddenKey, self.outputValue.value, self.weight)
+
+    class Meta:
+        verbose_name = u"隐藏－输出关联表"
+        verbose_name_plural = u"隐藏－输出关联表"

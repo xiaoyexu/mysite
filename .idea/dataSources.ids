@@ -116,11 +116,60 @@
       <column name="view" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <primary-key columns="id"/>
     </table>
+    <table name="xiaoye_hiddennode" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="hiddenKey" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="id"/>
+      <exported-key name="#FAKE_xiaoye_hiddenoutputmapping_2" table="xiaoye_hiddenoutputmapping" schema="" catalog="" columns="hiddenNode_id"/>
+      <exported-key name="#FAKE_xiaoye_inputhiddenmapping_2" table="xiaoye_inputhiddenmapping" schema="" catalog="" columns="hiddenNode_id"/>
+    </table>
+    <table name="xiaoye_hiddenoutputmapping" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="weight" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
+      <column name="hiddenNode_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="outputValue_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <primary-key columns="id"/>
+      <foreign-key name="#FAKE_xiaoye_hiddenoutputmapping_1" columns="outputValue_id" ref-table="xiaoye_outputvalue" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <foreign-key name="#FAKE_xiaoye_hiddenoutputmapping_2" columns="hiddenNode_id" ref-table="xiaoye_hiddennode" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <index name="xiaoye_hiddenoutputmapping_2a6d71ba" unique="true" columns="outputValue_id"/>
+      <index name="xiaoye_hiddenoutputmapping_6956bed5" unique="true" columns="hiddenNode_id"/>
+    </table>
+    <table name="xiaoye_inputhiddenmapping" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="weight" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
+      <column name="hiddenNode_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="inputValue_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <primary-key columns="id"/>
+      <foreign-key name="#FAKE_xiaoye_inputhiddenmapping_1" columns="inputValue_id" ref-table="xiaoye_inputvalue" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <foreign-key name="#FAKE_xiaoye_inputhiddenmapping_2" columns="hiddenNode_id" ref-table="xiaoye_hiddennode" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <index name="xiaoye_inputhiddenmapping_9c504cbc" unique="true" columns="inputValue_id"/>
+      <index name="xiaoye_inputhiddenmapping_6956bed5" unique="true" columns="hiddenNode_id"/>
+    </table>
+    <table name="xiaoye_inputvalue" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="value" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="weight" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
+      <primary-key columns="id"/>
+      <exported-key name="#FAKE_xiaoye_inputhiddenmapping_1" table="xiaoye_inputhiddenmapping" schema="" catalog="" columns="inputValue_id"/>
+    </table>
+    <table name="xiaoye_outputvalue" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="value" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="id"/>
+      <exported-key name="#FAKE_xiaoye_hiddenoutputmapping_1" table="xiaoye_hiddenoutputmapping" schema="" catalog="" columns="outputValue_id"/>
+    </table>
     <table name="xiaoye_rasptemperature" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="checkedAt" sqlType="DATETIME" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="temperature" sqlType="REAL" precision="2000000000" scale="10" nullable="true" jdbcType="6"/>
       <column name="model" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <primary-key columns="id"/>
+    </table>
+    <table name="xiaoye_roomtemp" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="checkedAt" sqlType="DATETIME" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="temperature" sqlType="REAL" precision="2000000000" scale="10" nullable="true" jdbcType="6"/>
+      <column name="humidity" sqlType="REAL" precision="2000000000" scale="10" nullable="true" jdbcType="6"/>
       <primary-key columns="id"/>
     </table>
     <table name="xiaoye_siteapptype" schema="" catalog="" type="TABLE">
@@ -177,13 +226,17 @@
     </table>
     <table name="xiaoye_weixinmsg" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="fromUserName" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="createTime" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="msgType" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="content" sqlType="TEXT" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="msgId" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="createdAt" sqlType="DATETIME" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="event" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="eventKey" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
+      <column name="fromUser_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="true" jdbcType="4"/>
       <primary-key columns="id"/>
+      <foreign-key name="#FAKE_xiaoye_weixinmsg_1" columns="fromUser_id" ref-table="xiaoye_weixinuser" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <index name="xiaoye_weixinmsg_62162682" unique="true" columns="fromUser_id"/>
     </table>
     <table name="xiaoye_weixinuser" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
@@ -191,6 +244,7 @@
       <column name="wxOpenId" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="wxName" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <primary-key columns="id"/>
+      <exported-key name="#FAKE_xiaoye_weixinmsg_1" table="xiaoye_weixinmsg" schema="" catalog="" columns="fromUser_id"/>
     </table>
   </data-source>
 </component>
