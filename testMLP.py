@@ -59,7 +59,7 @@ class MLP:
         if him:
             return him[0].weight
         else:
-            # If no relationship, setup default value 1
+            # If no relationship, setup default value 0
             defaultWeight = 0
             # setHiddenOutputMappingFor(model_hiddenNode, model_outputValue, defaultWeight)
             return defaultWeight
@@ -108,9 +108,11 @@ class MLP:
             [self.getHiddenOutputMappingWeightFor(model_hiddenNode, model_outputValue) for model_outputValue in
              self.model_outputValue_array] for model_hiddenNode in self.model_hiddenNode_array
             ]
-
-        print 'ItoH Matrix:', self.weightInputToHidden
-        print 'HtoO Matrix:', self.weightHiddenToOutput
+        print 'input Matirx:', self.inputNodeOutputValue
+        print 'hidden Matrix', self.hiddenNodeOutputValue
+        print 'output Matrix', self.outputNodeOutputValue
+        print 'ItoH Weight Matrix:', self.weightInputToHidden
+        print 'HtoO Weight Matrix:', self.weightHiddenToOutput
 
     def feedForward(self):
         for i in range(len(self.model_inputValue_array)):
@@ -142,7 +144,9 @@ class MLP:
             error = targets[k] - self.outputNodeOutputValue[k]
             output_deltas[k] = dtanh(self.outputNodeOutputValue[k]) * error
 
+        print "output deltas", output_deltas
         hidden_deltas = [0.0] * len(self.model_hiddenNode_array)
+
         for j in range(len(self.model_hiddenNode_array)):
             error = 0.0
             for k in range(len(self.model_outputValue_array)):
@@ -158,6 +162,8 @@ class MLP:
                 for j in range(len(self.model_hiddenNode_array)):
                     change = hidden_deltas[j] * self.inputNodeOutputValue[i]
                     self.weightInputToHidden[i][j] = self.weightInputToHidden[i][j] + 0.5 * change
+
+        print "hidden deltas", hidden_deltas
 
     def trainQuery(self, model_inputValue_array, model_outputValue_array, model_outputValue):
         self.generateHiddenNodeFor(model_inputValue_array, model_outputValue_array)
@@ -184,7 +190,6 @@ class MLP:
         InputValue.objects.all().delete()
         HiddenNode.objects.all().delete()
         OutputValue.objects.all().delete()
-
 
     def trainWith(self, inputStrList, outputStrList, outputStr):
         # setup initial nodes
@@ -220,51 +225,72 @@ class MLP:
         self.getResult(inputs, outputs)
         # self.showResult(inputs, outputs)
 
-
     def showResult(self, inputStrList, outputStrList):
         inputs = [InputValue.objects.get(value=a)
                   for a in inputStrList]
         outputs = [OutputValue.objects.get(value=a)
                    for a in outputStrList]
+        print 'show result'
         self.getResult(inputs, outputs)
+
+    def getModelOfInputStr(self, inputStrList):
+        return [InputValue.objects.get(value=m) for m in inputStrList]
+
+    def getModelOfOutputStr(self, outputStrList):
+        return [OutputValue.objects.get(value=m) for m in outputStrList]
 
 
 def demo1():
     mlp = MLP()
-    clear = False
+    clear = True
     if clear:
         mlp.clear()
         inputStr = [u'热', u'冷', u'饱', u'饿']
+        # inputStr = [u'热', u'冷']
+        inputModelList = []
         for v in inputStr:
             i = InputValue()
             i.value = v
             i.save()
-        outputStr = [u'哭', u'不哭不笑', u'笑']
+            inputModelList.append(i)
+        outputStr = [u'哭', u'叫', u'笑', u'安静']
+        # outputStr = [u'哭', u'笑']
+        outputModelList = []
         for v in outputStr:
             o = OutputValue()
             o.value = v
             o.save()
+            outputModelList.append(o)
 
-    for i in range(0):
-        mlp.trainWith([u'冷',u'饱'], [u'哭', u'不哭不笑'], u'不哭不笑')
-        mlp.trainWith([u'玩'], [u'笑', u'不哭不笑'], u'笑')
-        # mlp.trainWith([u'冷',u'饿'], [u'哭', u'不哭不笑'], u'哭')
-        # mlp.trainWith([u'热',u'饱'], [u'哭', u'不哭不笑', u'笑'], u'笑')
 
-    # trainWith(['Good'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
-    # trainWith(['Good', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
-    # trainWith(['Bad', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Derogatory')
-    # trainWith(['Nice', 'Story'], ['Commendatory', 'Neutral', 'Derogatory'], 'Commendatory')
-    #
-    mlp.showResult([u'玩',u'冷'], [u'哭', u'不哭不笑', u'笑'])
+    i = mlp.getModelOfInputStr([u'冷'])
+    o = mlp.getModelOfOutputStr([u'哭', u'叫'])
+    mlp.generateHiddenNodeFor(i, o)
+    # i = mlp.getModelOfInputStr([u'饿'])
+    # o = mlp.getModelOfOutputStr([u'哭'])
+    # mlp.generateHiddenNodeFor(i, o)
+    mlp.trainWith([u'冷'], [u'哭', u'叫'], u'叫')
+    mlp.showResult([u'冷'], [u'叫', u'笑', u'哭', u'安静'])
+
+    # mlp.trainWith([u'热'], [u'安静'], u'安静')
+    # # mlp.trainWith([u'饱'], [u'安静', u'笑'], u'笑')
+    # for i in range(10):
+    #     mlp.trainWith([u'热', u'饱'], [u'安静', u'笑', u'叫'], u'笑')
+    # for i in range(5):
+    #     mlp.trainWith([u'冷', u'饱'], [u'安静', u'笑', u'叫'], u'安静')
+    # mlp.showResult([u'饱'], [u'叫', u'笑', u'哭', u'安静'])
+    # mlp.showResult([u'热'], [u'叫', u'笑', u'哭', u'安静'])
+    # mlp.showResult([u'热', u'冷'], [u'叫', u'笑', u'哭', u'安静'])
+    # mlp.showResult([u'热', u'冷',u'饿'], [u'叫', u'笑', u'哭', u'安静'])
+
 
 def demo2():
     mlp = MLP()
     mlp.clear()
     inputStr = []
     outputStr = []
-    for i in range(-5,5):
-        inputStr.append('T%d'%i)
+    for i in range(-5, 5):
+        inputStr.append('T%d' % i)
 
     for v in inputStr:
         i = InputValue()
@@ -280,7 +306,7 @@ def demo2():
         i.save()
 
     for i in range(len(inputStr)):
-        newTemp = random.randint(-5,4)
+        newTemp = random.randint(-5, 4)
         mlp.trainWith([inputStr[i]], ['T%d' % newTemp], 'T%d' % newTemp)
 
 
